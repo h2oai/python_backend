@@ -214,7 +214,7 @@ EnvironmentManager::EnvironmentManager()
   if (env_p) {
     strcpy(tmp_dir_template, env_p);
   } else {
-    strcpy(tmp_dir_template, std::getenv("/tmp/python_env_XXXXXX"));
+    strcpy(tmp_dir_template, "/tmp/python_env_XXXXXX");
   }
 
   char* env_path = mkdtemp(tmp_dir_template);
