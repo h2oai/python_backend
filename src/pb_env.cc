@@ -210,7 +210,12 @@ RecursiveDirectoryDelete(const char* dir)
 EnvironmentManager::EnvironmentManager()
 {
   char tmp_dir_template[PATH_MAX + 1];
-  strcpy(tmp_dir_template, std::getenv("PYTHON_ENV_TMPDIR"));
+  const char* env_p = std::getenv("PYTHON_ENV_TMPDIR")
+  if (env_p) {
+    strcpy(tmp_dir_template, env_p);
+  } else {
+    strcpy(tmp_dir_template, std::getenv("/tmp/python_env_XXXXXX"));
+  }
 
   char* env_path = mkdtemp(tmp_dir_template);
   if (env_path == nullptr) {
