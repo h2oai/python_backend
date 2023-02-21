@@ -272,15 +272,18 @@ StubLauncher::Launch()
     if (WEXITSTATUS(stub_status_code) != 1) {
       // Give the execute permission for the triton_python_backend_stub to the
       // owner.
-      int error = chmod(python_backend_stub.c_str(), S_IXUSR);
-      if (error != 0) {
-        return TRITONSERVER_ErrorNew(
-            TRITONSERVER_ERROR_INTERNAL,
-            (std::string("Failed to give execute permission to "
-                         "triton_python_backend_stub in ") +
-             python_backend_stub + " " + stub_name +
-             " Error No.: " + std::to_string(error))
-                .c_str());
+      const char *path_name = python_backend_stub.c_str();
+      if (access (path_name, X_OK) != 0) {
+          int error = chmod(path_name, S_IXUSR);
+          if (error != 0) {
+            return TRITONSERVER_ErrorNew(
+                TRITONSERVER_ERROR_INTERNAL,
+                (std::string("Failed to give execute permission to "
+                             "triton_python_backend_stub in ") +
+                 python_backend_stub + " " + stub_name +
+                 " Error No.: " + std::to_string(error))
+                    .c_str());
+          }
       }
     }
 
