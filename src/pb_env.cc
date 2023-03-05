@@ -220,7 +220,8 @@ EnvironmentManager::EnvironmentManager()
   char* env_path = mkdtemp(tmp_dir_template);
   if (env_path == nullptr) {
     throw PythonBackendException(
-        "Failed to create temporary directory for Python environments.");
+        "Failed to create temporary directory for Python environments. " +
+          std::string(std::strerror(errno)));
   }
   strcpy(base_path_, tmp_dir_template);
 }
@@ -235,7 +236,8 @@ EnvironmentManager::ExtractIfNotExtracted(std::string env_path)
   char* err = realpath(env_path.c_str(), canonical_env_path);
   if (err == nullptr) {
     throw PythonBackendException(
-        std::string("Failed to get the canonical path for ") + env_path + ".");
+        std::string("Failed to get the canonical path for ") + env_path + ". " +
+          std::string(std::strerror(errno)));
   }
 
   // Extract only if the env has not been extracted yet.
@@ -252,7 +254,8 @@ EnvironmentManager::ExtractIfNotExtracted(std::string env_path)
     } else {
       throw PythonBackendException(
           std::string("Failed to create environment directory for '") +
-          dst_env_path.c_str() + "'.");
+          dst_env_path.c_str() + "'. " +
+          std::to_string(status));
     }
 
     // Add the path to the list of environments
